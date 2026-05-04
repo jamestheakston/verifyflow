@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VerifyFlow - Secure ID Verification Solutions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1a202c;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+        .feature-icon {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+        }
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+        .modal-close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        .modal-close-button:hover {
+            color: #1f2937;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white shadow-sm py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-gray-800">Verify<span class="gradient-text">Flow</span></div>
+            <!-- Navigation links removed as per request -->
+            <div class="md:hidden">
+                <button id="menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile menu links removed as per request -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg py-2 mt-2">
+            <!-- No links here as per request -->
+        </div>
+    </header>
+
+    <main>
+        <section class="hero bg-gradient-to-br from-indigo-50 to-purple-50 py-20 md:py-32 text-center">
+            <div class="container mx-auto px-4">
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
+                    Effortless & Secure <span class="gradient-text">ID Verification</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-700 mb-10 max-w-3xl mx-auto">
+                    Streamline your onboarding process and prevent fraud with our advanced, AI-powered identity verification solutions.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button id="get-started-button" class="btn-primary text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-xl">
+                        Get Started - It's free
+                    </button>
+                    <!-- "Learn More" button removed as per request -->
+                </div>
+            </div>
+        </section>
+
+        <section id="solutions" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Our Solutions</h2>
+                <p class="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
+                    We offer a comprehensive suite of ID verification services tailored to your business needs.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div class="feature-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Document Verification</h3>
+                        <p class="text-gray-600">
+                            Verify passports, driver's licenses, and national IDs from over 190 countries with advanced AI.
+                        </p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div class="feature-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Biometric Authentication</h3>
+                        <p class="text-gray-600">
+                            Perform liveness detection and facial matching to ensure the person is real and matches their ID.
+                        </p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div class="feature-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.003 12.003 0 002.92 12c0 3.072 1.873 5.785 4.513 7.16A11.976 11.976 0 0012 21c2.153 0 4.207-.59 6.002-1.632.766-.416 1.481-.905 2.104-1.465a12.003 12.003 0 00-1.99-7.859z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">Fraud Prevention</h3>
+                        <p class="text-gray-600">
+                            Leverage advanced fraud detection mechanisms to identify suspicious activities and documents.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="py-16 md:py-24 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Key Features</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Built with cutting-edge technology to provide you with the best in class verification.
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-8">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 feature-icon w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1l-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Global Coverage</h3>
+                                <p class="text-gray-600">
+                                    Verify identities from over 190 countries and territories, supporting a vast array of document types.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 feature-icon w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">AI-Powered Accuracy</h3>
+                                <p class="text-gray-600">
+                                    Our machine learning algorithms ensure high accuracy and reduce manual review efforts.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 feature-icon w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.003 12.003 0 002.92 12c0 3.072 1.873 5.785 4.513 7.16A11.976 11.976 0 0012 21c2.153 0 4.207-.59 6.002-1.632.766-.416 1.481-.905 2.104-1.465a12.003 12.003 0 00-1.99-7.859z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Robust Security</h3>
+                                <p class="text-gray-600">
+                                    Industry-leading security protocols to protect sensitive customer data and ensure compliance.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center justify-center">
+                        <img src="https://nanonets.com/blog/content/images/2022/06/shutterstock_1785042593.jpg" alt="Secure Verification Illustration" class="rounded-xl shadow-lg w-full max-w-lg h-auto">
+                        <p class="text-sm text-gray-500 mt-2">Credit: Nanonets</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
+                <p class="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
+                    Our verification process is simple, fast, and user-friendly.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="flex flex-col items-center">
+                        <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-3xl font-bold mb-6">1</div>
+                        <h3 class="text-xl font-semibold mb-3">User Uploads ID</h3>
+                        <p class="text-gray-600">
+                            Your customer takes a photo of their ID document and a selfie using their device.
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-20 h-20 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-3xl font-bold mb-6">2</div>
+                        <h3 class="text-xl font-semibold mb-3">AI Verification</h3>
+                        <p class="text-gray-600">
+                            Our AI analyzes the document for authenticity and matches the selfie to the ID photo.
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-20 h-20 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center text-3xl font-bold mb-6">3</div>
+                        <h3 class="text-xl font-semibold mb-3">Instant Decision</h3>
+                        <p class="text-gray-600">
+                            Receive a real-time verification decision, allowing for quick and secure onboarding.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 py-8">
+        <div class="container mx-auto px-4 text-center text-sm">
+            <p>&copy; 2025 VerifyFlow. All rights reserved.</p>
+            <div class="mt-2 space-x-4">
+                <!-- Footer links removed as per request -->
+            </div>
+        </div>
+    </footer>
+
+    <!-- Coming Soon Modal -->
+    <div id="coming-soon-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-button" id="modal-close-button">&times;</button>
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Coming Soon!</h3>
+            <p class="text-gray-700">
+                We're working hard to bring you this feature. Stay tuned for updates!
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('menu-button').addEventListener('click', function() {
+            var mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
+        // Get Started button and modal functionality
+        const getStartedButton = document.getElementById('get-started-button');
+        const comingSoonModal = document.getElementById('coming-soon-modal');
+        const modalCloseButton = document.getElementById('modal-close-button');
+
+        getStartedButton.addEventListener('click', function() {
+            comingSoonModal.classList.add('show');
+        });
+
+        modalCloseButton.addEventListener('click', function() {
+            comingSoonModal.classList.remove('show');
+        });
+
+        // Close modal when clicking outside
+        comingSoonModal.addEventListener('click', function(event) {
+            if (event.target === comingSoonModal) {
+                comingSoonModal.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
