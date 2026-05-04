@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Webhook - VerifyFlow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 280px;
+            background-color: #1a202c;
+            color: #e2e8f0;
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.15);
+        }
+        .sidebar-header {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: #6366f1;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.85rem;
+            border-radius: 0.75rem;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .sidebar-nav a:hover {
+            background-color: #2d3748;
+            color: #ffffff;
+        }
+        .sidebar-nav a.active-nav {
+            background-color: #4338ca;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .sidebar-nav .material-icons {
+            margin-right: 1.25rem;
+            font-size: 1.75rem;
+        }
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 3rem;
+            background-color: #ffffff;
+            overflow-y: auto;
+        }
+        .content-section {
+            background-color: #ffffff;
+            padding: 3rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 8px 20px -4px rgba(0, 0, 0, 0.08);
+            max-width: 950px;
+            width: 100%;
+            text-align: left;
+            display: none;
+            margin-bottom: 2.5rem;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 2.5rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3), 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 700px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .modal-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 2rem;
+        }
+        .close-button {
+            color: #94a3b8;
+            float: right;
+            font-size: 36px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 1.25rem;
+            right: 1.75rem;
+            transition: color 0.2s ease-in-out;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #334155;
+        }
+        .webhook-details-content {
+            margin-top: 1.5rem;
+            background-color: #f1f5f9;
+            padding: 2rem;
+            border-radius: 1rem;
+            font-family: 'Fira Code', 'monospace';
+            white-space: pre-wrap;
+            font-size: 1rem;
+            line-height: 1.7;
+            width: 100%;
+        }
+        .webhook-details-content h3 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 1.25rem;
+        }
+        .webhook-details-content p {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+        .webhook-details-content ul {
+            list-style: disc;
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .webhook-details-content li {
+            margin-bottom: 0.75rem;
+            color: #475569;
+        }
+        .webhook-details-content strong {
+            color: #1a202c;
+        }
+        .webhook-details-content .bg-gray-100 {
+            background-color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #cbd5e1;
+            word-break: break-all;
+        }
+        .webhook-details-content pre {
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        #sendTestEmailButton {
+            margin-top: 2.5rem;
+            padding: 0.85rem 2.5rem;
+            font-size: 1.15rem;
+        }
+        #testEmailMessage {
+            margin-top: 1.25rem;
+            font-weight: 500;
+        }
+        .custom-test-form label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: #334155;
+        }
+        .custom-test-form input[type="email"],
+        .custom-test-form input[type="text"] {
+            width: 100%;
+            padding: 0.85rem;
+            margin-bottom: 1.25rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.625rem;
+            font-size: 1.05rem;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .custom-test-form input[type="email"]:focus,
+        .custom-test-form input[type="text"]:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
+        }
+        .custom-test-form input[disabled] {
+            background-color: #e2e8f0;
+            cursor: not-allowed;
+        }
+        .banner {
+            background-color: #fffbeb;
+            color: #92400e;
+            padding: 1.25rem 1.75rem;
+            border-radius: 0.85rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid #fde68a;
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+        }
+        .banner .material-icons {
+            font-size: 2.25rem;
+            color: #d97706;
+        }
+        .delete-account-section {
+            margin-top: 2.5rem;
+            padding: 2rem;
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 1rem;
+            text-align: center;
+        }
+        .delete-account-section h3 {
+            color: #dc2626;
+            margin-bottom: 1.25rem;
+        }
+        .delete-account-button {
+            background-color: #ef4444;
+            color: white;
+            padding: 0.85rem 1.75rem;
+            border-radius: 0.625rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .delete-account-button:hover {
+            background-color: #dc2626;
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        .auth-method-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            align-items: center;
+        }
+        .auth-method-container input {
+            width: 100%;
+            max-width: 350px;
+        }
+        .auth-method-container button {
+            width: 100%;
+            max-width: 350px;
+            padding: 0.85rem 1.75rem;
+            border-radius: 0.625rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .google-auth-button {
+            background-color: #4285F4;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        .google-auth-button:hover {
+            background-color: #357ae8;
+        }
+        .google-auth-button .material-icons {
+            font-size: 1.35rem;
+            margin-right: 0;
+        }
+        .modal-message {
+            margin-top: 1.25rem;
+            font-weight: 500;
+            text-align: center;
+            color: red;
+        }
+        .profile-setting-group {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            background-color: #f8fafc;
+        }
+        .profile-setting-group label {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+        .profile-setting-group input[type="text"],
+        .profile-setting-group input[type="password"] {
+            width: 100%;
+            padding: 0.85rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.625rem;
+            margin-bottom: 1rem;
+        }
+        .profile-setting-group button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.7rem 1.4rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .profile-setting-group button:hover {
+            background-color: #4338ca;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .profile-setting-message {
+            font-size: 0.9rem;
+            margin-top: 0.75rem;
+            text-align: center;
+        }
+        .api-info-section {
+            margin-top: 2.5rem;
+            padding: 2rem;
+            background-color: #e0f7fa;
+            border: 1px solid #80deea;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+        .api-info-section .material-icons {
+            font-size: 2.25rem;
+            color: #00bcd4;
+        }
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+            margin-left: 0.6rem;
+        }
+        .tooltip-content {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-12px);
+            width: 220px;
+            padding: 0.85rem;
+            background-color: #334155;
+            color: #ffffff;
+            font-size: 0.9rem;
+            border-radius: 0.625rem;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 20;
+            transition: opacity 0.15s ease-in-out;
+        }
+        .tooltip-container:hover .tooltip-content {
+            opacity: 1;
+            visibility: visible;
+        }
+        .profile-settings-collapsed {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        .profile-settings-expanded {
+            max-height: 2000px;
+            transition: max-height 0.4s ease-in;
+        }
+        .template-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2.5rem;
+        }
+        .template-card {
+            background-color: #fefefe;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+        .template-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+        }
+        .template-card img {
+            width: 100%;
+            object-fit: contain;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .template-card-content {
+            padding: 1.75rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .template-card-content h3 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 0.85rem;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+        }
+        .template-card-content h3 .material-icons {
+            font-size: 1.3rem;
+            margin-left: 0.6rem;
+            color: #64748b;
+            cursor: help;
+        }
+        .template-card-content p {
+            font-size: 1rem;
+            color: #475569;
+            margin-bottom: 1.25rem;
+            flex-grow: 1;
+        }
+        .template-card-button {
+            background-color: #6366f1;
+            color: white;
+            padding: 0.7rem 1.2rem;
+            border-radius: 0.625rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .template-card-button:hover {
+            background-color: #4f46e5;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .template-card-button .material-icons {
+            font-size: 1.3rem;
+            margin-right: 0.6rem;
+        }
+        .user-status-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            padding: 0.6rem;
+            border-radius: 0.625rem;
+            background-color: #2d3748;
+            margin-bottom: 1.25rem;
+        }
+        .user-status-display img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #4a5568;
+        }
+        .template-build-button {
+            background-color: #f59e0b;
+        }
+        .template-build-button:hover {
+            background-color: #d97706;
+        }
+        .template-build-button:disabled {
+            background-color: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .modal-content-iframe {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 1.5rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3), 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+            width: 95%;
+            height: 95%;
+            max-width: none;
+            max-height: none;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .modal-content-iframe .close-button {
+            top: 0.75rem;
+            right: 0.75rem;
+            font-size: 2.25rem;
+        }
+        .modal-content-iframe iframe {
+            flex-grow: 1;
+            min-height: 0;
+            width: 100%;
+            border: none;
+            border-radius: 0.75rem;
+        }
+        .hash-list {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            background-color: #f8fafc;
+        }
+        .hash-list li {
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .hash-list li:last-child {
+            border-bottom: none;
+        }
+        .hash-list li span:first-child {
+            font-weight: 500;
+            color: #334155;
+        }
+        .hash-list li code {
+            background-color: #e2e8f0;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.4rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            VerifyFlow
+        </div>
+        <nav class="sidebar-nav flex-grow">
+            <a href="#" data-section="my-webhook-content" data-title="My Webhook" class="active-nav">
+                <span class="material-icons">webhook</span>
+                My Webhook
+            </a>
+            <a href="#" data-section="email-templates-content" data-title="Email Templates">
+                <span class="material-icons">mail_outline</span>
+                Email Templates
+            </a>
+            <a href="/id/index.html" class="">
+                <span class="material-icons">credit_card</span>
+                ID Verification Solutions
+            </a>
+            <a href="#" data-section="support-developer-content" data-title="Support the Developer">
+                <span class="material-icons">volunteer_activism</span>
+                Support Us
+            </a>
+        </nav>
+        <div class="mt-auto pt-8 border-t border-gray-700">
+            <!-- Settings button remains here -->
+            <a href="#" data-section="settings-content" data-title="Settings" class="flex items-center justify-center px-5 py-3 mb-4 rounded-lg text-white bg-gray-700 hover:bg-gray-800 transition-colors duration-200 shadow-md">
+                <span class="material-icons mr-2">settings</span>
+                Settings
+            </a>
+            <div id="userDashboardStatus" class="user-status-display">
+            </div>
+            <button id="signOutDashboardButton" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center shadow-md">
+                <span class="material-icons mr-2">logout</span>
+                Sign Out
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div id="my-webhook-content" class="content-section active">
+            <div class="banner">
+                <span class="material-icons">warning</span>
+                <div>
+                    <p class="font-semibold">Important: Daily Limit Reached</p>
+                    <p class="text-sm">If you receive a "Success!" message in your browser for any email verification, and no email arrives (even after checking your spam folder), it likely means our daily limit for sending events via our provider has been reached. We acknowledge the request but the event is stopped internally.</p>
+                </div>
+            </div>
+
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-8 text-center">
+                Your Webhook Solution
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto text-center">
+                Your dedicated webhook for effortless email verification:
+            </p>
+            <div class="bg-gray-100 p-5 rounded-xl mb-10 text-center border border-gray-200 shadow-inner">
+                <code class="text-xl font-mono text-indigo-700 break-all select-all">https://eod8e6xe3qjydo9.m.pipedream.net</code>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-center gap-5 mt-8">
+                <button id="howToCallWebhookButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-7 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center shadow-md">
+                    <span class="material-icons mr-2">code</span>
+                    How to Call This Webhook
+                </button>
+                <button id="whatEmailLooksLikeButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3.5 px-7 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center shadow-md">
+                    <span class="material-icons mr-2">visibility</span>
+                    What the email looks like
+                </button>
+            </div>
+            <button id="sendCustomTestEventButton" class="mt-6 bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 px-7 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center mx-auto shadow-md">
+                <span class="material-icons mr-2">tune</span>
+                Send Custom Test Event
+                </button>
+        </div>
+
+        <div id="email-templates-content" class="content-section">
+            <h2 class="text-3xl font-bold text-gray-900 mb-7 text-center">Template Store</h2>
+            <p class="text-gray-700 mb-9 text-center">Choose from our pre-designed email templates to customize your verification emails.</p>
+
+            <div class="banner">
+                <span class="material-icons">hourglass_empty</span>
+                <div>
+                    <p class="font-semibold">Coming Soon!</p>
+                    <p class="text-sm">The ability to select and customize email templates is currently under development.</p>
+                </div>
+            </div>
+
+            <div class="template-card-grid">
+                <div class="template-card">
+                    <img src="/templateimages/classic.jpg" alt="Classic Email Template" class="w-full" width="1280" height="720">
+                    <div class="template-card-content">
+                        <h3 class="text-lg font-semibold">
+                            Classic Verification
+                        </h3>
+                        <p class="text-sm text-gray-600">A clean and straightforward email verification template, perfect for most applications. Focuses on clarity and user action.</p>
+                        <button class="template-card-button" onclick="window.open('/templateimages/classic.jpg', '_blank');">
+                            Preview
+                        </button>
+                    </div>
+                </div>
+
+                <div class="template-card">
+                    <img src="/templateimages/modern.jpg" alt="Modern Email Template" class="w-full" width="1280" height="720">
+                    <div class="template-card-content">
+                        <h3 class="text-lg font-semibold">
+                            Modern & Minimal
+                        </h3>
+                        <p class="text-sm text-gray-600">A sleek, minimalist design that emphasizes your brand. Ideal for apps with a contemporary aesthetic.</p>
+                        <button class="template-card-button" onclick="window.open('/templateimages/modern.jpg', '_blank');">
+                            Preview
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-content" class="content-section">
+            <h2 class="text-3xl font-bold text-gray-900 mb-7">Settings</h2>
+            <p class="text-gray-700">Manage your account settings, preferences, and integrations here.</p>
+            <div class="mt-9">
+                <h3 class="text-xl font-semibold text-gray-900 mb-5 cursor-pointer flex items-center justify-between" id="profileSettingsToggle">
+                    Profile Settings
+                    <span class="material-icons transform transition-transform duration-300" id="profileSettingsIcon">chevron_right</span>
+                </h3>
+                <div id="profileSettingsContent" class="profile-settings-collapsed">
+                    <div class="bg-gray-50 p-7 rounded-lg border border-gray-200">
+                        <div class="profile-setting-group">
+                            <label for="displayNameInput">Display Name:</label>
+                            <input type="text" id="displayNameInput" placeholder="Your Display Name">
+                            <button id="updateDisplayNameButton">Update Display Name</button>
+                            <p id="displayNameMessage" class="profile-setting-message"></p>
+                        </div>
+
+                        <div class="profile-setting-group">
+                            <label for="profilePictureInput">
+                                <span class="tooltip-container">
+                                    <span class="material-icons text-gray-500 text-base">info</span>
+                                    <div class="tooltip-content">
+                                        Upload your image to an Image to URL converter or use services such as Imgbb or ImageKit to get a direct image URL.
+                                    </div>
+                                </span>
+                                Profile Picture URL:
+                            </label>
+                            <input type="text" id="profilePictureInput" placeholder="https://example.com/your-image.jpg">
+                            <button id="updateProfilePictureButton">Update Profile Picture</button>
+                            <p id="profilePictureMessage" class="profile-setting-message"></p>
+                        </div>
+
+                        <div class="profile-setting-group">
+                            <label>Password:</label>
+                            <button id="changePasswordButton">Change Password</button>
+                            <span id="passwordChangeInfo" class="text-sm text-gray-500 mt-1 block"></span>
+                            <p id="passwordChangeMessage" class="profile-setting-message"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-9">
+                <h3 class="text-xl font-semibold text-gray-900 mb-5">API & Webhook Configuration</h3>
+                <div class="api-info-section">
+                    <span class="material-icons">info</span>
+                    <p class="text-gray-700">API & Webhook Configurations have moved to the 'My Webhook' tab.</p>
+                </div>
+            </div>
+
+            <div class="mt-9">
+                <h3 class="text-xl font-semibold text-gray-900 mb-5">Navigation Settings</h3>
+                <div class="api-info-section flex-col items-start">
+                    <span class="material-icons">navigation</span>
+                    <p class="text-gray-700 mb-4">You can directly access any tab by adding a hash to the URL. For example: <code>your-dashboard-url.html#settings-content</code> will open this tab directly.</p>
+                    <button id="showNavigationListButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 shadow-md">
+                        Show List of Tabs
+                    </button>
+                </div>
+            </div>
+
+            <div class="delete-account-section">
+                <h3 class="text-2xl font-semibold text-red-600 mb-5">Delete Account</h3>
+                <p class="text-gray-700 mb-5">Permanently delete your VerifyFlow account and all associated data. This action cannot be undone.</p>
+                <p class="text-sm text-gray-600 mb-5">
+                    Your VerifyFlow service will continue to work on your site until you manually remove the webhook configuration from your site.
+                </p>
+                <button id="deleteAccountButton" class="delete-account-button">
+                    Delete My Account
+                </button>
+            </div>
+        </div>
+
+        <div id="about-content" class="content-section">
+            <h2 class="text-3xl font-bold text-gray-900 mb-7">About VerifyFlow</h2>
+            <p class="text-gray-700 mb-5">VerifyFlow provides a simple, free, and fully managed email verification solution for all your users.</p>
+            <p class="text-gray-700">Our mission is to make email verification effortless, allowing developers and businesses to focus on building great products without worrying about email deliverability or complex infrastructure.</p>
+            <p class="text-gray-700 mt-5">&copy; 2025 VerifyFlow. All rights reserved.</p>
+        </div>
+
+        <div id="support-developer-content" class="content-section">
+            <h2 class="text-3xl font-bold text-gray-900 mb-7 text-center">Support VerifyFlow</h2>
+            <p class="text-gray-700 mb-4 text-center">VerifyFlow is completely free to use, and we are committed to keeping it that way!</p>
+            <p class="text-gray-700 mb-9 text-center">If you find VerifyFlow useful, consider supporting its development to help us continue providing and improving this service.</p>
+            <div class="bg-blue-50 p-6 rounded-lg border border-blue-200 text-center shadow-md">
+                <p class="text-lg text-blue-800 font-semibold mb-4">Your support helps us cover operational costs and develop new features.</p>
+                <button id="donateNowButton" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 shadow-md">
+                    <span class="material-icons mr-2">favorite</span>
+                    Donate Now
+                </button>
+                <p class="text-sm text-gray-600 mt-4">Thank-you for your generosity!</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="webhookDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeWebhookDetailsModal">&times;</span>
+            <h2 class="text-2xl font-bold text-gray-900 mb-7 text-center">How to Call Your Webhook</h2>
+
+            <div class="webhook-details-content">
+                <h3 class="text-xl font-semibold text-gray-900 mb-5">Webhook Call Requirements:</h3>
+                <p class="text-gray-700 mb-3">To call this webhook, send a <strong>POST</strong> request to the URL below with a JSON body containing the following fields:</p>
+                <div class="bg-gray-100 p-4 rounded-lg mb-5 text-center border border-gray-200 shadow-inner">
+                    <code class="font-mono text-indigo-700 break-all select-all">https://eod8e6xe3qjydo9.m.pipedream.net</code>
+                </div>
+                <ul class="list-disc list-inside text-gray-700 pl-6">
+                    <li><strong>to_address</strong> (string, required): The email address of the user to verify.</li>
+                    <li><strong>reply_to</strong> (string, optional): The email address for replies to the verification email.</li>
+                    <li><strong>app_name</strong> (string, required): The name of your application, used in the verification email.</li>
+                    <li><strong>redirect_url</strong> (string, required): The URL where the user should be redirected after successful verification.</li>
+                </ul>
+                <p class="text-gray-700 mt-5">Example JSON Body:</p>
+                <pre><code>{
+    "to_address": "user@example.com",
+    "reply_to": "support@your-app.com",
+    "app_name": "Your Awesome App",
+    "redirect_url": "https://your-app.com/verification-success"
+}
+</code></pre>
+            </div>
+            <div class="mt-6 flex justify-center">
+                <button id="copyWebhookCodeButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200 shadow-md">
+                    <span class="material-icons mr-2">content_copy</span>
+                    Copy Code Example
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="emailPreviewModal" class="modal">
+        <div class="modal-content-iframe">
+            <span class="close-button" id="closeEmailPreviewModal">&times;</span>
+            <iframe id="emailPreviewIframe" src="/emails/verify.html" title="Email Preview"></iframe>
+        </div>
+    </div>
+
+    <div id="customTestEventModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeCustomTestEventModal">&times;</span>
+            <h2 class="text-2xl font-bold text-gray-900 mb-7 text-center">Send Custom Test Event</h2>
+            <form id="customTestForm" class="custom-test-form w-full max-w-lg">
+                <label for="testToAddress">To Email Address:</label>
+                <input type="email" id="testToAddress" placeholder="test@example.com" required class="mb-4">
+
+                <label for="testAppName">App Name:</label>
+                <input type="text" id="testAppName" placeholder="My Test App" required class="mb-4">
+
+                <label for="testRedirectUrl">Redirect URL:</label>
+                <input type="text" id="testRedirectUrl" placeholder="https://your-app.com/success" required class="mb-6">
+
+                <button type="submit" id="sendTestEmailButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-7 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center mx-auto shadow-md">
+                    <span class="material-icons mr-2">send</span>
+                    Send Test Email
+                </button>
+                <p id="testEmailMessage" class="text-center"></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="deleteAccountConfirmationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeDeleteAccountConfirmationModal">&times;</span>
+            <h2 class="text-2xl font-bold text-red-600 mb-7 text-center">Confirm Account Deletion</h2>
+            <p class="text-gray-700 mb-5 text-center">Are you absolutely sure you want to delete your account? This action is irreversible and all your data will be permanently lost.</p>
+            <div class="flex gap-4">
+                <button id="confirmDeleteAccountButton" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200 shadow-md">
+                    Yes, Delete My Account
+                </button>
+                <button id="cancelDeleteAccountButton" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200 shadow-md">
+                    Cancel
+                </button>
+            </div>
+            <p id="deleteAccountMessage" class="modal-message"></p>
+        </div>
+    </div>
+
+    <div id="navigationListModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeNavigationListModal">&times;</span>
+            <h2 class="text-2xl font-bold text-gray-900 mb-7 text-center">Available Navigation Tabs</h2>
+            <ul id="hashList" class="hash-list">
+            </ul>
+        </div>
+    </div>
+
+    <div id="passwordChangeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closePasswordChangeModal">&times;</span>
+            <h2 class="text-2xl font-bold text-gray-900 mb-7 text-center">Change Password</h2>
+            <div class="auth-method-container">
+                <input type="password" id="currentPasswordInput" placeholder="Current Password" class="p-3 border rounded-lg">
+                <input type="password" id="newPasswordInput" placeholder="New Password" class="p-3 border rounded-lg">
+                <input type="password" id="confirmNewPasswordInput" placeholder="Confirm New Password" class="p-3 border rounded-lg">
+                <button id="updatePasswordButton" class="bg-blue-600 hover:bg-blue-700 text-white">Update Password</button>
+                <p id="passwordUpdateMessage" class="modal-message"></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, updateProfile, updatePassword, deleteUser, reauthenticateWithCredential, EmailAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Initialize Firebase
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+        let app;
+        let auth;
+        let db;
+        let userId = null; // Variable to store the current user ID
+        let isAuthReady = false; // Flag to indicate if authentication is ready
+
+        // Initialize Firebase app and services
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            console.log("Firebase initialized successfully.");
+        } catch (error) {
+            console.error("Error initializing Firebase:", error);
+            // Display a user-friendly message if Firebase fails to initialize
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent) {
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'text-red-600 font-bold text-center mt-8 p-4 bg-red-100 rounded-lg';
+                errorMessage.textContent = 'Failed to initialize Firebase. Please check your configuration.';
+                mainContent.prepend(errorMessage);
+            }
+        }
+
+
+        // Function to update user status display
+        async function updateUserStatusDisplay(user) {
+            const userDashboardStatus = document.getElementById('userDashboardStatus');
+            if (!userDashboardStatus) {
+                console.warn("userDashboardStatus element not found.");
+                return; // Exit if element not found
+            }
+
+            if (user) {
+                userId = user.uid; // Set userId from authenticated user
+                let displayName = user.displayName || 'Anonymous User';
+                let photoURL = user.photoURL || 'https://placehold.co/32x32/cccccc/ffffff?text=U';
+
+                // Fetch additional profile data from Firestore
+                if (db && userId) {
+                    try {
+                        const userProfileDocRef = doc(db, 'artifacts', appId, 'users', userId, 'profile', 'user_profile');
+                        const userProfileSnap = await getDoc(userProfileDocRef);
+                        if (userProfileSnap.exists()) {
+                            const profileData = userProfileSnap.data();
+                            displayName = profileData.displayName || displayName;
+                            photoURL = profileData.photoURL || photoURL;
+                            console.log("User profile data fetched from Firestore.");
+                        }
+                    } catch (error) {
+                        console.error("Error fetching user profile from Firestore:", error);
+                    }
+                }
+
+                userDashboardStatus.innerHTML = `
+                    <img src="${photoURL}" alt="Profile Picture" class="rounded-full w-8 h-8">
+                    <span>${displayName} (ID: ${userId})</span>
+                `;
+                console.log(`User status updated: ${displayName} (${userId})`);
+            } else {
+                userId = null;
+                userDashboardStatus.innerHTML = `
+                    <span class="material-icons">account_circle</span>
+                    <span>Not Signed In</span>
+                `;
+                console.log("User not signed in. Displaying default status.");
+            }
+        }
+
+        // Authentication state listener
+        if (auth) {
+            onAuthStateChanged(auth, async (user) => {
+                console.log("onAuthStateChanged triggered. User:", user ? user.uid : "null");
+                if (user) {
+                    // User is signed in
+                    await updateUserStatusDisplay(user);
+                    isAuthReady = true; // Set auth ready flag
+                    // Populate profile settings inputs
+                    const displayNameInput = document.getElementById('displayNameInput');
+                    const profilePictureInput = document.getElementById('profilePictureInput');
+                    const passwordChangeInfo = document.getElementById('passwordChangeInfo');
+                    const changePasswordButton = document.getElementById('changePasswordButton');
+
+                    if (displayNameInput) displayNameInput.value = user.displayName || '';
+                    if (profilePictureInput) profilePictureInput.value = user.photoURL || '';
+                    if (user.providerData.some(provider => provider.providerId === 'password')) {
+                        if (passwordChangeInfo) passwordChangeInfo.textContent = "You can change your password.";
+                        if (changePasswordButton) changePasswordButton.disabled = false;
+                    } else {
+                        if (passwordChangeInfo) passwordChangeInfo.textContent = "Password change is only available for email/password accounts.";
+                        if (changePasswordButton) changePasswordButton.disabled = true;
+                    }
+                } else {
+                    // User is signed out, try to sign in anonymously
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            console.log("Attempting signInWithCustomToken...");
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            console.log("Attempting signInAnonymously...");
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Error during anonymous sign-in:", error);
+                        updateUserStatusDisplay(null); // Show not signed in if anonymous fails
+                    } finally {
+                        isAuthReady = true; // Ensure flag is set even if anonymous fails
+                        console.log("Authentication ready flag set to true.");
+                    }
+                }
+            });
+        }
+
+
+        // Function to switch content sections
+        function showSection(sectionId, title) {
+            console.log(`Attempting to show section: ${sectionId} with title: ${title}`);
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                console.log(`Section '${sectionId}' activated.`);
+            } else {
+                console.error(`Section with ID '${sectionId}' not found.`);
+            }
+
+
+            document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                link.classList.remove('active-nav');
+            });
+            const targetLink = document.querySelector(`.sidebar-nav a[data-section="${sectionId}"]`);
+            if (targetLink) {
+                targetLink.classList.add('active-nav');
+                console.log(`Sidebar link for '${sectionId}' activated.`);
+            } else {
+                // Special handling for ID Verification link if it doesn't have data-section
+                const idVerificationLink = document.querySelector('a[href="/id/index.html"]');
+                if (sectionId === 'id-verification-solutions' && idVerificationLink) {
+                    idVerificationLink.classList.add('active-nav');
+                    console.log(`ID Verification link activated.`);
+                }
+                console.warn(`Sidebar link for section '${sectionId}' not found or does not have data-section.`);
+            }
+
+
+            document.title = `My Webhook - ${title}`;
+        }
+
+        // Modals and their close buttons
+        const webhookDetailsModal = document.getElementById('webhookDetailsModal');
+        const closeWebhookDetailsModal = document.getElementById('closeWebhookDetailsModal');
+        const howToCallWebhookButton = document.getElementById('howToCallWebhookButton');
+
+        const emailPreviewModal = document.getElementById('emailPreviewModal');
+        const closeEmailPreviewModal = document.getElementById('closeEmailPreviewModal');
+        const whatEmailLooksLikeButton = document.getElementById('whatEmailLooksLikeButton');
+
+        const customTestEventModal = document.getElementById('customTestEventModal');
+        const closeCustomTestEventModal = document.getElementById('closeCustomTestEventModal');
+        const sendCustomTestEventButton = document.getElementById('sendCustomTestEventButton');
+
+        const deleteAccountConfirmationModal = document.getElementById('deleteAccountConfirmationModal');
+        const closeDeleteAccountConfirmationModal = document.getElementById('closeDeleteAccountConfirmationModal');
+        const deleteAccountButton = document.getElementById('deleteAccountButton');
+        const confirmDeleteAccountButton = document.getElementById('confirmDeleteAccountButton');
+        const cancelDeleteAccountButton = document.getElementById('cancelDeleteAccountButton');
+        const deleteAccountMessage = document.getElementById('deleteAccountMessage');
+
+        const navigationListModal = document.getElementById('navigationListModal');
+        const closeNavigationListModal = document.getElementById('closeNavigationListModal');
+        const showNavigationListButton = document.getElementById('showNavigationListButton');
+        const hashList = document.getElementById('hashList');
+
+        const passwordChangeModal = document.getElementById('passwordChangeModal');
+        const closePasswordChangeModal = document.getElementById('closePasswordChangeModal');
+        const changePasswordButton = document.getElementById('changePasswordButton');
+
+        // Open/Close Modal functions
+        function openModal(modal) {
+            if (modal) {
+                modal.style.display = 'flex';
+                console.log(`Modal '${modal.id}' opened.`);
+            }
+        }
+
+        function closeModal(modal) {
+            if (modal) {
+                modal.style.display = 'none';
+                console.log(`Modal '${modal.id}' closed.`);
+            }
+        }
+
+        // Event Listeners for Modals
+        if (howToCallWebhookButton) howToCallWebhookButton.addEventListener('click', () => openModal(webhookDetailsModal));
+        if (closeWebhookDetailsModal) closeWebhookDetailsModal.addEventListener('click', () => closeModal(webhookDetailsModal));
+        if (webhookDetailsModal) webhookDetailsModal.addEventListener('click', (e) => {
+            if (e.target === webhookDetailsModal) closeModal(webhookDetailsModal);
+        });
+
+        if (whatEmailLooksLikeButton) whatEmailLooksLikeButton.addEventListener('click', () => openModal(emailPreviewModal));
+        if (closeEmailPreviewModal) closeEmailPreviewModal.addEventListener('click', () => closeModal(emailPreviewModal));
+        if (emailPreviewModal) emailPreviewModal.addEventListener('click', (e) => {
+            if (e.target === emailPreviewModal) closeModal(emailPreviewModal);
+        });
+
+        if (sendCustomTestEventButton) sendCustomTestEventButton.addEventListener('click', () => openModal(customTestEventModal));
+        if (closeCustomTestEventModal) closeCustomTestEventModal.addEventListener('click', () => closeModal(customTestEventModal));
+        if (customTestEventModal) customTestEventModal.addEventListener('click', (e) => {
+            if (e.target === customTestEventModal) closeModal(customTestEventModal);
+        });
+
+        if (deleteAccountButton) deleteAccountButton.addEventListener('click', () => openModal(deleteAccountConfirmationModal));
+        if (closeDeleteAccountConfirmationModal) closeDeleteAccountConfirmationModal.addEventListener('click', () => closeModal(deleteAccountConfirmationModal));
+        if (deleteAccountConfirmationModal) deleteAccountConfirmationModal.addEventListener('click', (e) => {
+            if (e.target === deleteAccountConfirmationModal) closeModal(deleteAccountConfirmationModal);
+        });
+
+        if (showNavigationListButton) showNavigationListButton.addEventListener('click', () => {
+            if (hashList) hashList.innerHTML = ''; // Clear previous list
+            document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                const sectionId = link.dataset.section;
+                const title = link.dataset.title || link.textContent.trim(); // Get title from data-title or text content
+                if (sectionId) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span>${title}</span> <code>#${sectionId}</code>`;
+                    hashList.appendChild(li);
+                } else if (link.href && link.href.includes('/id/index.html')) { // Special handling for ID Verification link
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span>ID Verification Solutions</span> <code>/id/index.html</code>`;
+                    hashList.appendChild(li);
+                }
+            });
+            openModal(navigationListModal);
+        });
+        if (closeNavigationListModal) closeNavigationListModal.addEventListener('click', () => closeModal(navigationListModal));
+        if (navigationListModal) navigationListModal.addEventListener('click', (e) => {
+            if (e.target === navigationListModal) closeModal(navigationListModal);
+        });
+
+        if (changePasswordButton) changePasswordButton.addEventListener('click', () => openModal(passwordChangeModal));
+        if (closePasswordChangeModal) closePasswordChangeModal.addEventListener('click', () => closeModal(passwordChangeModal));
+        if (passwordChangeModal) passwordChangeModal.addEventListener('click', (e) => {
+            if (e.target === passwordChangeModal) closeModal(passwordChangeModal);
+        });
+
+        // Ensure all DOM-related event listeners are attached after the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Sidebar Navigation
+            document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    console.log(`Sidebar link clicked: ${this.dataset.section || this.href}`);
+                    // Prevent default only for internal navigation links, not external ones like /id/index.html
+                    if (this.dataset.section) {
+                        e.preventDefault();
+                        const sectionId = this.dataset.section;
+                        const title = this.dataset.title;
+                        showSection(sectionId, title);
+                    }
+                });
+            });
+
+            // Handle URL hash for direct navigation on initial load
+            const hash = window.location.hash.substring(1); // Remove '#'
+            if (hash) {
+                const targetLink = document.querySelector(`.sidebar-nav a[data-section="${hash}"]`);
+                if (targetLink) {
+                    showSection(hash, targetLink.dataset.title);
+                }
+            }
+        });
+
+
+        // Profile Settings Toggle
+        const profileSettingsToggle = document.getElementById('profileSettingsToggle');
+        const profileSettingsContent = document.getElementById('profileSettingsContent');
+        const profileSettingsIcon = document.getElementById('profileSettingsIcon');
+
+        if (profileSettingsToggle) {
+            profileSettingsToggle.addEventListener('click', () => {
+                console.log("Profile Settings Toggle clicked.");
+                if (profileSettingsContent) {
+                    profileSettingsContent.classList.toggle('profile-settings-expanded');
+                    profileSettingsContent.classList.toggle('profile-settings-collapsed');
+                    console.log(`Profile settings content visibility toggled. Expanded: ${profileSettingsContent.classList.contains('profile-settings-expanded')}`);
+                }
+                if (profileSettingsIcon) {
+                    profileSettingsIcon.classList.toggle('rotate-90');
+                }
+            });
+        }
+
+
+        // Profile Settings Functionality
+        const displayNameInput = document.getElementById('displayNameInput');
+        const updateDisplayNameButton = document.getElementById('updateDisplayNameButton');
+        const displayNameMessage = document.getElementById('displayNameMessage');
+
+        const profilePictureInput = document.getElementById('profilePictureInput');
+        const updateProfilePictureButton = document.getElementById('updateProfilePictureButton');
+        const profilePictureMessage = document.getElementById('profilePictureMessage');
+
+        const currentPasswordInput = document.getElementById('currentPasswordInput');
+        const newPasswordInput = document.getElementById('newPasswordInput');
+        const confirmNewPasswordInput = document.getElementById('confirmNewPasswordInput');
+        const updatePasswordButton = document.getElementById('updatePasswordButton');
+        const passwordChangeMessage = document.getElementById('passwordChangeMessage');
+        const passwordChangeInfo = document.getElementById('passwordChangeInfo');
+
+        if (updateDisplayNameButton) {
+            updateDisplayNameButton.addEventListener('click', async () => {
+                console.log("Update Display Name button clicked.");
+                const user = auth.currentUser;
+                if (!user || !isAuthReady) {
+                    if (displayNameMessage) {
+                        displayNameMessage.textContent = 'Please wait for authentication to complete.';
+                        displayNameMessage.style.color = 'orange';
+                    }
+                    console.warn("Attempted to update display name before auth ready or user not signed in.");
+                    return;
+                }
+                if (displayNameInput && displayNameInput.value.trim() === '') {
+                    if (displayNameMessage) {
+                        displayNameMessage.textContent = 'Display name cannot be empty.';
+                        displayNameMessage.style.color = 'red';
+                    }
+                    console.warn("Display name input is empty.");
+                    return;
+                }
+
+                try {
+                    // Update Firebase Auth profile
+                    if (user && displayNameInput) {
+                        await updateProfile(user, { displayName: displayNameInput.value });
+                        console.log("Firebase Auth display name updated.");
+                    }
+
+
+                    // Update Firestore profile
+                    if (db && userId) {
+                        const userProfileDocRef = doc(db, 'artifacts', appId, 'users', userId, 'profile', 'user_profile');
+                        await setDoc(userProfileDocRef, {
+                            displayName: displayNameInput ? displayNameInput.value : user.displayName,
+                            photoURL: user.photoURL || 'https://placehold.co/32x32/cccccc/ffffff?text=U'
+                        }, { merge: true });
+                        console.log("Firestore display name updated.");
+                    }
+
+
+                    if (displayNameMessage) {
+                        displayNameMessage.textContent = 'Display name updated successfully!';
+                        displayNameMessage.style.color = 'green';
+                    }
+                    updateUserStatusDisplay(user); // Update display with new name
+                } catch (error) {
+                    console.error("Error updating display name:", error);
+                    if (displayNameMessage) {
+                        displayNameMessage.textContent = `Error: ${error.message}`;
+                        displayNameMessage.style.color = 'red';
+                    }
+                }
+            });
+        }
+
+        if (updateProfilePictureButton) {
+            updateProfilePictureButton.addEventListener('click', async () => {
+                console.log("Update Profile Picture button clicked.");
+                const user = auth.currentUser;
+                if (!user || !isAuthReady) {
+                    if (profilePictureMessage) {
+                        profilePictureMessage.textContent = 'Please wait for authentication to complete.';
+                        profilePictureMessage.style.color = 'orange';
+                    }
+                    console.warn("Attempted to update profile picture before auth ready or user not signed in.");
+                    return;
+                }
+                if (profilePictureInput && profilePictureInput.value.trim() === '') {
+                    if (profilePictureMessage) {
+                        profilePictureMessage.textContent = 'Profile picture URL cannot be empty.';
+                        profilePictureMessage.style.color = 'red';
+                    }
+                    console.warn("Profile picture URL input is empty.");
+                    return;
+                }
+                // Basic URL validation
+                try {
+                    if (profilePictureInput) {
+                        new URL(profilePictureInput.value);
+                    }
+                } catch (_) {
+                    if (profilePictureMessage) {
+                        profilePictureMessage.textContent = 'Please enter a valid URL.';
+                        profilePictureMessage.style.color = 'red';
+                    }
+                    console.warn("Invalid profile picture URL entered.");
+                    return;
+                }
+
+
+                try {
+                    // Update Firebase Auth profile
+                    if (user && profilePictureInput) {
+                        await updateProfile(user, { photoURL: profilePictureInput.value });
+                        console.log("Firebase Auth profile picture updated.");
+                    }
+
+
+                    // Update Firestore profile
+                    if (db && userId) {
+                        const userProfileDocRef = doc(db, 'artifacts', appId, 'users', userId, 'profile', 'user_profile');
+                        await setDoc(userProfileDocRef, {
+                            displayName: user.displayName || 'Anonymous User',
+                            photoURL: profilePictureInput ? profilePictureInput.value : user.photoURL
+                        }, { merge: true });
+                        console.log("Firestore profile picture updated.");
+                    }
+
+
+                    if (profilePictureMessage) {
+                        profilePictureMessage.textContent = 'Profile picture updated successfully!';
+                        profilePictureMessage.style.color = 'green';
+                    }
+                    updateUserStatusDisplay(user); // Update display with new photo
+                } catch (error) {
+                    console.error("Error updating profile picture:", error);
+                    if (profilePictureMessage) {
+                        profilePictureMessage.textContent = `Error: ${error.message}`;
+                        profilePictureMessage.style.color = 'red';
+                    }
+                }
+            });
+        }
+
+        if (updatePasswordButton) {
+            updatePasswordButton.addEventListener('click', async () => {
+                console.log("Update Password button clicked.");
+                const user = auth.currentUser;
+                const currentPassword = currentPasswordInput ? currentPasswordInput.value : '';
+                const newPassword = newPasswordInput ? newPasswordInput.value : '';
+                const confirmNewPassword = confirmNewPasswordInput ? confirmNewPasswordInput.value : '';
+
+                if (!user || !isAuthReady) {
+                    if (passwordChangeMessage) {
+                        passwordChangeMessage.textContent = 'Please wait for authentication to complete.';
+                        passwordChangeMessage.style.color = 'orange';
+                    }
+                    console.warn("Attempted to update password before auth ready or user not signed in.");
+                    return;
+                }
+
+                if (newPassword !== confirmNewPassword) {
+                    if (passwordChangeMessage) {
+                        passwordChangeMessage.textContent = 'New passwords do not match.';
+                        passwordChangeMessage.style.color = 'red';
+                    }
+                    console.warn("New passwords do not match.");
+                    return;
+                }
+
+                if (newPassword.length < 6) {
+                    if (passwordChangeMessage) {
+                        passwordChangeMessage.textContent = 'New password must be at least 6 characters long.';
+                        passwordChangeMessage.style.color = 'red';
+                    }
+                    console.warn("New password too short.");
+                    return;
+                }
+
+                try {
+                    // Reauthenticate user if they have an email/password provider
+                    if (user.providerData.some(provider => provider.providerId === 'password')) {
+                        console.log("Attempting to reauthenticate with current password.");
+                        const credential = EmailAuthProvider.credential(user.email, currentPassword);
+                        await reauthenticateWithCredential(user, credential);
+                        console.log("Reauthentication successful.");
+                    } else {
+                        // For other providers (like anonymous), we can't reauthenticate with password.
+                        // This is a simplified example; in a real app, you'd handle different auth methods.
+                        // If the user is anonymous, they cannot change a password as they don't have one.
+                        if (passwordChangeMessage) {
+                            passwordChangeMessage.textContent = 'Password change is only available for email/password accounts.';
+                            passwordChangeMessage.style.color = 'red';
+                        }
+                        console.warn("Password change attempted for non-email/password account.");
+                        return;
+                    }
+
+                    await updatePassword(user, newPassword);
+                    console.log("Password updated successfully in Firebase Auth.");
+                    if (passwordChangeMessage) {
+                        passwordChangeMessage.textContent = 'Password updated successfully!';
+                        passwordChangeMessage.style.color = 'green';
+                    }
+                    if (currentPasswordInput) currentPasswordInput.value = '';
+                    if (newPasswordInput) newPasswordInput.value = '';
+                    if (confirmNewPasswordInput) confirmNewPasswordInput.value = '';
+                } catch (error) {
+                    console.error("Error updating password:", error);
+                    if (passwordChangeMessage) {
+                        passwordChangeMessage.textContent = `Error: ${error.message}`;
+                        passwordChangeMessage.style.color = 'red';
+                    }
+                }
+            });
+        }
+
+        // Send Custom Test Event
+        const customTestForm = document.getElementById('customTestForm');
+        const testEmailMessage = document.getElementById('testEmailMessage');
+
+        if (customTestForm) {
+            customTestForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                console.log("Send Custom Test Event button clicked.");
+                if (testEmailMessage) {
+                    testEmailMessage.textContent = 'Sending test email...';
+                    testEmailMessage.style.color = 'gray';
+                }
+
+
+                const toAddress = document.getElementById('testToAddress') ? document.getElementById('testToAddress').value : '';
+                const appName = document.getElementById('testAppName') ? document.getElementById('testAppName').value : '';
+                const redirectUrl = document.getElementById('testRedirectUrl') ? document.getElementById('testRedirectUrl').value : '';
+
+                const webhookUrl = 'https://eod8e6xe3qjydo9.m.pipedream.net'; // Your webhook URL
+
+                try {
+                    const response = await fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            to_address: toAddress,
+                            app_name: appName,
+                            redirect_url: redirectUrl
+                        }),
+                    });
+
+                    if (response.ok) {
+                        if (testEmailMessage) {
+                            testEmailMessage.textContent = 'Test email sent successfully!';
+                            testEmailMessage.style.color = 'green';
+                        }
+                        console.log("Test email sent successfully.");
+                    } else {
+                        const errorText = await response.text();
+                        if (testEmailMessage) {
+                            testEmailMessage.textContent = `Failed to send test email: ${response.status} - ${errorText}`;
+                            testEmailMessage.style.color = 'red';
+                        }
+                        console.error(`Failed to send test email: ${response.status} - ${errorText}`);
+                    }
+                } catch (error) {
+                    console.error('Error sending test email:', error);
+                    if (testEmailMessage) {
+                        testEmailMessage.textContent = `Error sending test email: ${error.message}`;
+                        testEmailMessage.style.color = 'red';
+                    }
+                }
+            });
+        }
+
+        // Copy Webhook Code
+        const copyWebhookCodeButton = document.getElementById('copyWebhookCodeButton');
+        if (copyWebhookCodeButton) {
+            copyWebhookCodeButton.addEventListener('click', () => {
+                console.log("Copy Webhook Code button clicked.");
+                const codeToCopy = `{
+    "to_address": "user@example.com",
+    "reply_to": "support@your-app.com",
+    "app_name": "Your Awesome App",
+    "redirect_url": "https://your-app.com/verification-success"
+}`;
+                // Use document.execCommand('copy') for better iframe compatibility
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = codeToCopy;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                try {
+                    document.execCommand('copy');
+                    // You could add a temporary visual confirmation here
+                    const originalText = copyWebhookCodeButton.innerHTML;
+                    copyWebhookCodeButton.innerHTML = `<span class="material-icons mr-2">check</span>Copied!`;
+                    setTimeout(() => {
+                        copyWebhookCodeButton.innerHTML = originalText;
+                    }, 2000);
+                    console.log("Webhook code copied to clipboard.");
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                } finally {
+                    document.body.removeChild(tempTextArea);
+                }
+            });
+        }
+
+        // Delete Account Functionality
+        if (confirmDeleteAccountButton) {
+            confirmDeleteAccountButton.addEventListener('click', async () => {
+                console.log("Confirm Delete Account button clicked.");
+                const user = auth.currentUser;
+                if (!user || !isAuthReady) {
+                    if (deleteAccountMessage) {
+                        deleteAccountMessage.textContent = 'Please wait for authentication to complete.';
+                        deleteAccountMessage.style.color = 'orange';
+                    }
+                    console.warn("Attempted to delete account before auth ready or user not signed in.");
+                    return;
+                }
+
+                try {
+                    // Delete user's profile data from Firestore first
+                    if (db && userId) {
+                        const userProfileDocRef = doc(db, 'artifacts', appId, 'users', userId, 'profile', 'user_profile');
+                        // Use deleteDoc if the document is guaranteed to exist, otherwise consider a check
+                        // For simplicity, we'll try to delete. If it doesn't exist, it won't throw an error for deleteDoc.
+                        await deleteDoc(userProfileDocRef);
+                        console.log("User profile data deleted from Firestore.");
+                    }
+
+                    await deleteUser(user);
+                    console.log("User account deleted from Firebase Auth.");
+                    if (deleteAccountMessage) {
+                        deleteAccountMessage.textContent = 'Account deleted successfully. Redirecting...';
+                        deleteAccountMessage.style.color = 'green';
+                    }
+                    setTimeout(() => {
+                        window.location.href = '/'; // Redirect to home or login page
+                    }, 2000);
+                } catch (error) {
+                    console.error("Error deleting account:", error);
+                    if (deleteAccountMessage) {
+                        deleteAccountMessage.textContent = `Error: ${error.message}`;
+                        deleteAccountMessage.style.color = 'red';
+                        // Handle reauthentication requirement specifically
+                        if (error.code === 'auth/requires-recent-login') {
+                            deleteAccountMessage.textContent = 'Please sign in again to delete your account.';
+                            deleteAccountMessage.style.color = 'orange';
+                            // You'd typically trigger a re-login flow here
+                        }
+                    }
+                }
+            });
+        }
+
+        if (cancelDeleteAccountButton) {
+            cancelDeleteAccountButton.addEventListener('click', () => {
+                console.log("Cancel Delete Account button clicked.");
+                closeModal(deleteAccountConfirmationModal);
+                if (deleteAccountMessage) {
+                    deleteAccountMessage.textContent = ''; // Clear message
+                }
+            });
+        }
+
+        // Sign Out Functionality
+        const signOutDashboardButton = document.getElementById('signOutDashboardButton');
+        if (signOutDashboardButton) {
+            signOutDashboardButton.addEventListener('click', async () => {
+                console.log("Sign Out button clicked.");
+                try {
+                    await signOut(auth);
+                    console.log("User signed out successfully.");
+                    // The onAuthStateChanged listener will update the UI
+                    // Optionally, redirect to a login page
+                    window.location.href = '/';
+                } catch (error) {
+                    console.error("Error signing out:", error);
+                }
+            });
+        }
+
+        // Donate Now Button - Placeholder
+        const donateNowButton = document.getElementById('donateNowButton');
+        if (donateNowButton) {
+            donateNowButton.addEventListener('click', () => {
+                // In a real application, this would link to a donation page or payment gateway
+                console.log("Donate Now button clicked! (Placeholder)");
+                // Example: window.open('https://example.com/donate', '_blank');
+            });
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VerifyFlow Privacy Policy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Lighter background consistent with dashboard */
+            color: #334155;
+            line-height: 1.7; /* Improved line height for readability */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .header-policy {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 1.5rem 2rem;
+            text-align: center;
+        }
+        .header-policy h1 {
+            font-size: 2.25rem; /* Slightly smaller for header */
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+        }
+        .header-policy p {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        .content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            padding: 2.5rem 1.5rem; /* Increased padding for overall content */
+        }
+        .container {
+            max-width: 900px; /* Increased max-width for better content flow */
+            width: 100%;
+            background-color: #ffffff;
+            padding: 3rem; /* More generous padding */
+            border-radius: 1rem; /* More rounded corners */
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1), 0 6px 15px -3px rgba(0, 0, 0, 0.05); /* Stronger shadow */
+        }
+        h1.main-title { /* Specific class for the main title within the container */
+            font-size: 2.8rem; /* Larger main title */
+            font-weight: 800; /* Extra bold */
+            color: #1a202c;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        h2 {
+            font-size: 2.25rem; /* Larger section headings */
+            font-weight: 700;
+            color: #1a202c;
+            margin-top: 2.5rem; /* More space above sections */
+            margin-bottom: 1.25rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.75rem;
+        }
+        h3 {
+            font-size: 1.6rem; /* Larger sub-headings */
+            font-weight: 600;
+            color: #1a202c;
+            margin-top: 1.75rem;
+            margin-bottom: 0.8rem;
+        }
+        ul, ol {
+            margin-left: 2rem; /* Increased indent for lists */
+            margin-bottom: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.6rem; /* More space between list items */
+        }
+        strong {
+            font-weight: 700;
+            color: #1a202c; /* Make strong text stand out more */
+        }
+        p {
+            margin-bottom: 1.25rem; /* More space between paragraphs */
+            color: #475569; /* Slightly darker text for better contrast */
+        }
+        code {
+            background-color: #e2e8f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+        .footer-policy {
+            background-color: #1a202c; /* Dark footer */
+            color: #cbd5e1;
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header-policy">
+        <h1>VerifyFlow</h1>
+        <p>Your privacy is important to us.</p>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="container">
+            <h1 class="main-title">Privacy Policy</h1>
+
+            <p><strong>Last Updated:</strong> July 22, 2025</p>
+
+            <p>VerifyFlow ("we," "our," or "us") is committed to protecting the privacy of our users. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our email verification service ("Service").</p>
+
+            <p>By using our Service, you agree to the collection and use of information in accordance with this policy.</p>
+
+            <h2>1. Information We Collect</h2>
+
+            <p>We collect various types of information to provide and improve our Service to you.</p>
+
+            <h3>1.1. Information You Provide Directly</h3>
+            <ul>
+                <li><strong>Account Information:</strong> When you create an account, we collect information such as your email address and a password. If you use Google Sign-In, we receive your email address and public profile information (like your display name and profile picture URL) from Google.</li>
+                <li><strong>Profile Information:</strong> You may choose to provide a display name and a profile picture URL in your dashboard settings.</li>
+                <li><strong>Contact Information:</strong> If you contact us for support or inquiries, we will collect the information you provide, such as your name and email address.</li>
+                <li><strong>Webhook Configuration Data:</strong> When you configure our webhook, you provide us with:
+                    <ul>
+                        <li><code>to_address</code>: The email address of the user you wish to verify.</li>
+                        <li><code>reply_to</code> (optional): An email address for replies to the verification email.</li>
+                        <li><code>app_name</code>: The name of your application, used in the verification email.</li>
+                        <li><code>redirect_url</code>: The URL where the user will be redirected after successful verification.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>1.2. Information Collected Automatically</h3>
+            <ul>
+                <li><strong>Usage Data:</strong> We may collect information on how the Service is accessed and used. This Usage Data may include information such as your computer's Internet Protocol address (e.g., IP address), browser type, browser version, the pages of our Service that you visit, the time and date of your visit, the time spent on those pages, unique device identifiers, and other diagnostic data.</li>
+                <li><strong>Cookies and Tracking Technologies:</strong> We use cookies and similar tracking technologies to track activity on our Service and hold certain information.
+                    <ul>
+                        <li><strong>Cookies:</strong> Small files placed on your device. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Service.</li>
+                        <li><strong>Firebase Authentication Cookies:</strong> Firebase Authentication uses cookies to manage user sessions and maintain authentication state.</li>
+                    </ul>
+                </li>
+                <li><strong>hCaptcha Data:</strong> When you interact with hCaptcha on our site, hCaptcha collects certain information to determine if you are a human. This data is processed according to hCaptcha's privacy policy. We do not directly store or process the hCaptcha verification data beyond receiving a successful verification token.</li>
+            </ul>
+
+            <h2>2. How We Use Your Information</h2>
+            <p>We use the collected information for various purposes:</p>
+            <ul>
+                <li><strong>To Provide and Maintain the Service:</strong> This includes managing your account, providing email verification services, and ensuring the Service functions correctly.</li>
+                <li><strong>To Personalize Your Experience:</strong> To display your display name and profile picture in your dashboard.</li>
+                <li><strong>To Send Verification Emails:</strong> We use the <code>to_address</code>, <code>reply_to</code>, <code>app_name</code>, and <code>redirect_url</code> provided via the webhook to construct and send verification emails to your users.</li>
+                <li><strong>To Improve Our Service:</strong> We use usage data to understand how our Service is used and to identify areas for improvement.</li>
+                <li><strong>For Security and Fraud Prevention:</strong> To protect the integrity and security of our Service and to prevent unauthorized access or fraudulent activities, including using hCaptcha to mitigate bot activity.</li>
+                <li><strong>To Communicate with You:</strong> To respond to your inquiries, send you service-related announcements, and provide support.</li>
+                <li><strong>For Internal Analytics:</strong> To perform data analysis and research to understand user behavior and trends.</li>
+            </ul>
+
+            <h2>3. How We Share Your Information</h2>
+            <p>We may share your information in the following situations:</p>
+            <ul>
+                <li><strong>With Service Providers:</strong> We may employ third-party companies and individuals to facilitate our Service ("Service Providers"), to provide the Service on our behalf, to perform Service-related services, or to assist us in analyzing how our Service is used. These third parties have access to your Personal Data only to perform these tasks on our behalf and are obligated not to disclose or use it for any other purpose.
+                    <ul>
+                        <li><strong>Firebase:</strong> We use Google Firebase for authentication, database (Firestore), and potentially other backend services. Firebase's handling of data is governed by Google's privacy policy.</li>
+                        <li><strong>hCaptcha:</strong> We integrate hCaptcha for bot detection. Data collected by hCaptcha is subject to hCaptcha's privacy policy.</li>
+                        <li><strong>Email Sending Service:</strong> The <code>to_address</code>, <code>reply_to</code>, <code>app_name</code>, and <code>redirect_url</code> are sent to our email sending service provider (e.g., Pipedream, or another service that the webhook URL points to) solely for the purpose of sending the verification email.</li>
+                    </ul>
+                </li>
+                <li><strong>For Legal Reasons:</strong> We may disclose your Personal Data in the good faith belief that such action is necessary to:
+                    <ul>
+                        <li>Comply with a legal obligation</li>
+                        <li>Protect and defend the rights or property of VerifyFlow</li>
+                        <li>Prevent or investigate possible wrongdoing in connection with the Service</li>
+                        <li>Protect the personal safety of users of the Service or the public</li>
+                        <li>Protect against legal liability</li>
+                    </ul>
+                </li>
+                <li><strong>Business Transfers:</strong> If VerifyFlow is involved in a merger, acquisition, or asset sale, your Personal Data may be transferred. We will provide notice before your Personal Data is transferred and becomes subject to a different Privacy Policy.</li>
+            </ul>
+            <p>We <strong>do not</strong> sell your personal data to third parties.</p>
+
+            <h2>4. Data Retention</h2>
+            <p>We retain your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use your Personal Data to the extent necessary to comply with our legal obligations (for example, if we are required to retain your data to comply with applicable laws), resolve disputes, and enforce our legal agreements and policies.</p>
+            <p>We will also retain Usage Data for internal analysis purposes. Usage Data is generally retained for a shorter period, except when this data is used to strengthen the security or to improve the functionality of our Service, or we are legally obligated to retain this data for longer periods.</p>
+
+            <h2>5. Your Data Protection Rights</h2>
+            <p>Depending on your location, you may have the following data protection rights:</p>
+            <ul>
+                <li><strong>The right to access:</strong> You have the right to request copies of your personal data.</li>
+                <li><strong>The right to rectification:</strong> You have the right to request that we correct any information you believe is inaccurate or complete information you believe is incomplete.</li>
+                <li><strong>The right to erasure:</strong> You have the right to request that we erase your personal data, under certain conditions.</li>
+                <li><strong>The right to restrict processing:</strong> You have the right to request that we restrict the processing of your personal data, under certain conditions.</li>
+                <li><strong>The right to object to processing:</strong> You have the right to object to our processing of your personal data, under certain conditions.</li>
+                <li><strong>The right to data portability:</strong> You have the right to request that we transfer the data that we have collected to another organization, or directly to you, under certain conditions.</li>
+                <li><strong>The right to withdraw consent:</strong> You also have the right to withdraw your consent at any time where VerifyFlow relied on your consent to process your personal information.</li>
+            </ul>
+            <p>If you make a request, we have one month to respond to you. If you would like to exercise any of these rights, please contact us using the contact details provided below.</p>
+
+            <h2>6. Security of Your Data</h2>
+            <p>The security of your data is important to us. We strive to use commercially acceptable means to protect your Personal Data. However, no method of transmission over the Internet or method of electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your Personal Data, we cannot guarantee its absolute security.</p>
+
+            <h2>7. Links to Other Sites</h2>
+            <p>Our Service may contain links to other sites that are not operated by us. If you click on a third-party link, you will be directed to that third party's site. We strongly advise you to review the Privacy Policy of every site you visit.</p>
+            <p>We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services.</p>
+
+            <h2>8. Children's Privacy</h2>
+            <p>Our Service is not intended for use by children under the age of 13 ("Children"). We do not knowingly collect personally identifiable information from anyone under the age of 13. If you are a parent or guardian and you are aware that your child has provided us with Personal Data, please contact us. If we become aware that we have collected Personal Data from children without verification of parental consent, we take steps to remove that information from our servers.</p>
+
+            <h2>9. Changes to This Privacy Policy</h2>
+            <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
+            <p>We will let you know via email and/or a prominent notice on our Service, prior to the change becoming effective and update the "Last Updated" date at the top of this Privacy Policy.</p>
+            <p>You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p>
+        </div>
+    </div>
+
+    <footer class="footer-policy">
+        <p>&copy; 2025 VerifyFlow. All rights reserved.</p>
+    </footer>
+</body>
+</html>

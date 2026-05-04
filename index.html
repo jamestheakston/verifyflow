@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Effortless Email Verification - Free & Fully Managed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .hcaptcha-container {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+        }
+        .hcaptcha-message {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #ef4444;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-white shadow-sm p-4 md:p-6">
+            <div class="container mx-auto flex justify-between items-center">
+                <a href="#" id="verifyFlowLogo" class="text-2xl font-bold text-indigo-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    VerifyFlow
+                </a>
+                <nav>
+                    <a href="#" class="text-gray-600 hover:text-indigo-600 px-3 py-2 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Home</a>
+                    <span id="userStatus" class="ml-4 text-gray-700"></span>
+                    <button id="signOutButton" class="ml-4 bg-red-500 text-white px-3 py-1 rounded-md hidden hover:bg-red-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">Sign Out</button>
+                </nav>
+            </div>
+        </header>
+
+        <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 to-white">
+            <div class="max-w-4xl w-full text-center">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+                    Streamlined Email Verification, <span class="text-indigo-600">Completely Free.</span>
+                </h1>
+                <p class="text-lg sm:text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+                    Effortlessly verify user emails with our simple, one-webhook solution. We handle everything, so you don't have to.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#" id="getStartedButton" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-full shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-105">
+                        Get Started - It's Free!
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+            <div class="container mx-auto max-w-6xl">
+                <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-12">
+                    How VerifyFlow Simplifies Verification
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    <div class="bg-gray-50 p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div class="text-indigo-600 text-5xl mb-6 text-center">
+                            <span class="material-icons text-5xl">flash_on</span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">One Webhook Simplicity</h3>
+                        <p class="text-gray-600 text-center">
+                            Integrate our powerful verification with a single webhook. No complex APIs, just pure simplicity.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div class="text-indigo-600 text-5xl mb-6 text-center">
+                            <span class="material-icons text-5xl">email</span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Effortless Email Delivery</h3>
+                        <p class="text-gray-600 text-center">
+                            We handle sending verification emails directly to your users, ensuring high deliverability.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div class="text-indigo-600 text-5xl mb-6 text-center">
+                            <span class="material-icons text-5xl">check_circle</span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">User-Friendly Verification</h3>
+                        <p class="text-gray-600 text-center">
+                            Users click a simple button in their email, and their verification is complete.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div class="text-indigo-600 text-5xl mb-6 text-center">
+                            <span class="material-icons text-5xl">build</span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Fully Managed by Us</h3>
+                        <p class="text-gray-600 text-center">
+                            Focus on your product while we manage all the complexities of email verification infrastructure.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div class="text-indigo-600 text-5xl mb-6 text-center">
+                            <span class="material-icons text-5xl">sync_alt</span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Seamless Fallback</h3>
+                        <p class="text-gray-600 text-center">
+                            Our system includes a robust fallback mechanism for users, ensuring a smooth experience every time.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                        <div class="text-indigo-600 text-5xl mb-6 text-center">
+                            <span class="material-icons text-5xl">payments</span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Always Free</h3>
+                        <p class="text-gray-600 text-center">
+                            Enjoy all these features at no cost. Our solution is completely free for all users.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-indigo-700 py-16 px-4 sm:px-6 lg:px-8 text-white text-center">
+            <div class="container mx-auto max-w-4xl">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-6">
+                    Ready to Simplify Your Email Verification?
+                </h2>
+                <p class="text-lg mb-8 opacity-90">
+                    Get started today with VerifyFlow and experience hassle-free email verification.
+                </p>
+                <a href="#" id="startVerifyingButton" class="inline-flex items-center justify-center px-10 py-5 border border-transparent text-base font-medium rounded-full shadow-lg text-indigo-700 bg-white hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-all duration-300 transform hover:scale-105">
+                    Start Verifying for Free
+                </a>
+            </div>
+        </section>
+
+        <footer class="bg-gray-800 text-gray-300 py-8 px-4 sm:px-6 lg:px-8">
+            <div class="container mx-auto text-center">
+                <p>&copy; 2025 VerifyFlow. All rights reserved.</p>
+                <a href="policy.html" class="text-gray-400 hover:text-white mt-4 inline-block text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 rounded-md mx-2">Privacy Policy</a>
+            </div>
+        </footer>
+    </div>
+
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center" id="modalTitle"></h2>
+            <p id="modalMessage" class="mt-4 text-center text-sm text-red-500"></p>
+
+            <div id="authChoiceSection" class="flex flex-col gap-4 w-full px-4 hidden">
+                <p class="text-gray-700 text-center mb-4">Are you creating an account or logging in?</p>
+                <button id="createAccountChoiceButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200">
+                    Create Account
+                </button>
+                <button id="logInChoiceButton" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200">
+                    Log In
+                </button>
+            </div>
+
+            <div id="authMethodSection" class="hidden flex-col gap-4 w-full px-4">
+                <p class="text-gray-700 text-center mb-4">How would you like to authenticate?</p>
+                <button id="googleAuthMethodButton" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center">
+                    <span class="material-icons mr-2">g_mobiledata</span>
+                    Sign in with Google
+                </button>
+                <button id="emailAuthMethodButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200">
+                    Continue with Email
+                </button>
+                <button id="backToAuthChoiceButton" class="mt-4 text-gray-600 hover:text-gray-800 underline">Back</button>
+            </div>
+
+            <div id="emailPasswordSection" class="hidden flex-col gap-4 w-full px-4">
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+                    <input type="email" id="email" class="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" placeholder="your@example.com">
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                    <input type="password" id="password" class="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" placeholder="********">
+                </div>
+
+                <div class="hcaptcha-container">
+                    <div class="h-captcha" data-sitekey="11a0ed96-39f4-41fe-b3c8-7b0e852c95c8"></div>
+                </div>
+                <p id="hcaptchaMessage" class="hcaptcha-message"></p>
+
+                <button id="submitEmailAuthButton" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200">
+                    <span id="submitEmailAuthButtonText"></span>
+                </button>
+                <button id="backToAuthMethodButton" class="mt-4 text-gray-600 hover:text-gray-800 underline">Back</button>
+            </div>
+
+            <div id="adminLoginSection" class="hidden flex-col gap-4 w-full px-4">
+                <p class="text-gray-700 text-center mb-4">Enter admin credentials to log in.</p>
+                <div class="mb-4">
+                    <label for="adminEmail" class="block text-gray-700 text-sm font-bold mb-2">Admin Email:</label>
+                    <input type="email" id="adminEmail" class="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" placeholder="admin@example.com" value="admin@verifyflow.com" disabled>
+                </div>
+                <div class="mb-6">
+                    <label for="adminPassword" class="block text-gray-700 text-sm font-bold mb-2">Admin Password:</label>
+                    <input type="password" id="adminPassword" class="shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" placeholder="********">
+                </div>
+                <button id="submitAdminLoginButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors duration-200">
+                    Login as Admin
+                </button>
+                <button id="backFromAdminLoginButton" class="mt-4 text-gray-600 hover:text-gray-800 underline">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="//code.tidio.co/vrouj3pqf0whulepp7hcqal0kat0h0h2.js" async></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            GoogleAuthProvider,
+            signInWithPopup,
+            onAuthStateChanged,
+            signOut,
+            signInWithCustomToken
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyC9dOOGt2LyboihIhMRzKuTMea-lZshvk0",
+            authDomain: "verifyflowemails.firebaseapp.com",
+            projectId: "verifyflowemails",
+            storageBucket: "verifyflowemails.firebasestorage.app",
+            messagingSenderId: "239326065711",
+            appId: "1:239326065711:web:fc4de39b38ba50d8d6c2da",
+            measurementId: "G-MQF7KX6C4M"
+        };
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let userId = null;
+        let isSignInMode = true;
+
+        const authModal = document.getElementById('authModal');
+        const closeButton = document.querySelector('.close-button');
+        const verifyFlowLogo = document.getElementById('verifyFlowLogo');
+        const getStartedButton = document.getElementById('getStartedButton');
+        const startVerifyingButton = document.getElementById('startVerifyingButton');
+        
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const authChoiceSection = document.getElementById('authChoiceSection');
+        const createAccountChoiceButton = document.getElementById('createAccountChoiceButton');
+        const logInChoiceButton = document.getElementById('logInChoiceButton');
+        const authMethodSection = document.getElementById('authMethodSection');
+        const googleAuthMethodButton = document.getElementById('googleAuthMethodButton');
+        const emailAuthMethodButton = document.getElementById('emailAuthMethodButton');
+        const backToAuthChoiceButton = document.getElementById('backToAuthChoiceButton');
+        const emailPasswordSection = document.getElementById('emailPasswordSection');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const submitEmailAuthButton = document.getElementById('submitEmailAuthButton');
+        const submitEmailAuthButtonText = document.getElementById('submitEmailAuthButtonText');
+        const backToAuthMethodButton = document.getElementById('backToAuthMethodButton');
+        const hcaptchaMessage = document.getElementById('hcaptchaMessage');
+
+        const adminLoginSection = document.getElementById('adminLoginSection');
+        const adminEmailInput = document.getElementById('adminEmail');
+        const adminPasswordInput = document.getElementById('adminPassword');
+        const submitAdminLoginButton = document.getElementById('submitAdminLoginButton');
+        const backFromAdminLoginButton = document.getElementById('backFromAdminLoginButton');
+
+        const userStatus = document.getElementById('userStatus');
+        const signOutButton = document.getElementById('signOutButton');
+
+        const HCAPTCHA_SITE_KEY = '11a0ed96-39f4-41fe-b3c8-7b0e852c95c8';
+
+        function showModalStep(step) {
+            authChoiceSection.classList.add('hidden');
+            authMethodSection.classList.add('hidden');
+            emailPasswordSection.classList.add('hidden');
+            adminLoginSection.classList.add('hidden');
+            
+            modalMessage.textContent = ''; 
+            hcaptchaMessage.textContent = '';
+
+            if (typeof hcaptcha !== 'undefined') {
+                hcaptcha.reset();
+            }
+
+            switch (step) {
+                case 'choice':
+                    modalTitle.textContent = 'Sign In / Sign Up';
+                    authChoiceSection.classList.remove('hidden');
+                    break;
+                case 'method':
+                    modalTitle.textContent = 'Choose Authentication Method';
+                    authMethodSection.classList.remove('hidden');
+                    break;
+                case 'emailPassword':
+                    modalTitle.textContent = isSignInMode ? 'Sign In with Email' : 'Sign Up with Email';
+                    submitEmailAuthButtonText.textContent = isSignInMode ? 'Sign In' : 'Sign Up';
+                    emailPasswordSection.classList.remove('hidden');
+                    break;
+                case 'adminLogin':
+                    modalTitle.textContent = 'Admin Login';
+                    adminLoginSection.classList.remove('hidden');
+                    adminEmailInput.value = 'admin@verifyflow.com';
+                    adminEmailInput.disabled = true;
+                    adminPasswordInput.value = '';
+                    break;
+            }
+            authModal.style.display = 'flex';
+        }
+
+        function hideModal() {
+            authModal.style.display = 'none';
+        }
+
+        function redirectToDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+
+        verifyFlowLogo.addEventListener('click', (e) => {
+            e.preventDefault();
+            showModalStep('choice');
+        });
+        getStartedButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            showModalStep('choice');
+        });
+        startVerifyingButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            showModalStep('choice');
+        });
+
+        closeButton.addEventListener('click', hideModal);
+
+        window.addEventListener('click', (event) => {
+            if (event.target == authModal) {
+                hideModal();
+            }
+        });
+
+        createAccountChoiceButton.addEventListener('click', () => {
+            isSignInMode = false;
+            showModalStep('method');
+        });
+
+        logInChoiceButton.addEventListener('click', () => {
+            isSignInMode = true;
+            showModalStep('method');
+        });
+
+        googleAuthMethodButton.addEventListener('click', async () => {
+            modalMessage.textContent = '';
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+                modalMessage.textContent = 'Signed in with Google successfully!';
+                modalMessage.style.color = 'green';
+                hideModal();
+                redirectToDashboard();
+            } catch (error) {
+                console.error("Error signing in with Google:", error);
+                if (error.code === 'auth/user-disabled') {
+                    modalMessage.textContent = 'Your account has been disabled. Please contact VerifyFlow for more information.';
+                } else {
+                    modalMessage.textContent = `Google Sign In Error: ${error.message}`;
+                }
+                modalMessage.style.color = 'red';
+            }
+        });
+
+        emailAuthMethodButton.addEventListener('click', () => {
+            showModalStep('emailPassword');
+        });
+
+        backToAuthChoiceButton.addEventListener('click', () => {
+            showModalStep('choice');
+        });
+
+        async function verifyHcaptchaClientSide() {
+            const hcaptchaResponse = hcaptcha.getResponse();
+
+            if (!hcaptchaResponse) {
+                hcaptchaMessage.textContent = 'Please complete the hCaptcha verification.';
+                hcaptchaMessage.style.color = 'red';
+                return false;
+            }
+
+            return true;
+        }
+
+        submitEmailAuthButton.addEventListener('click', async () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            modalMessage.textContent = '';
+            hcaptchaMessage.textContent = '';
+
+            if (!email || !password) {
+                modalMessage.textContent = 'Please enter both email and password.';
+                modalMessage.style.color = 'red';
+                return;
+            }
+
+            const isHcaptchaValid = await verifyHcaptchaClientSide();
+            if (!isHcaptchaValid) {
+                return;
+            }
+
+            try {
+                if (isSignInMode) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    modalMessage.textContent = 'Signed in successfully!';
+                    modalMessage.style.color = 'green';
+                } else {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    modalMessage.textContent = 'Account created successfully! You are now signed in.';
+                    modalMessage.style.color = 'green';
+                }
+                hideModal();
+                redirectToDashboard();
+            } catch (error) {
+                console.error("Authentication error:", error);
+                if (error.code === 'auth/user-disabled') {
+                    modalMessage.textContent = 'Your account has been disabled. Please contact VerifyFlow for more information.';
+                } else {
+                    modalMessage.textContent = `Authentication Error: ${error.message}`;
+                }
+                modalMessage.style.color = 'red';
+                if (typeof hcaptcha !== 'undefined') {
+                    hcaptcha.reset();
+                }
+            }
+        });
+
+        backToAuthMethodButton.addEventListener('click', () => {
+            showModalStep('method');
+        });
+
+        submitAdminLoginButton.addEventListener('click', async () => {
+            const adminEmail = adminEmailInput.value;
+            const adminPassword = adminPasswordInput.value;
+            modalMessage.textContent = '';
+
+            if (!adminEmail || !adminPassword) {
+                modalMessage.textContent = 'Please enter both admin email and password.';
+                modalMessage.style.color = 'red';
+                return;
+            }
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+                const user = userCredential.user;
+
+                const adminRoleDocRef = doc(db, `artifacts/${appId}/users/${user.uid}/roles/admin`);
+                const adminRoleDoc = await getDoc(adminRoleDocRef);
+
+                if (adminRoleDoc.exists() && adminRoleDoc.data().isAdmin === true) {
+                    modalMessage.textContent = 'Admin login successful! Redirecting...';
+                    modalMessage.style.color = 'green';
+                    hideModal();
+                    window.location.href = '/admin/app';
+                } else {
+                    await signOut(auth);
+                    modalMessage.textContent = 'Access Denied: Not an admin account.';
+                    modalMessage.style.color = 'red';
+                }
+            } catch (error) {
+                console.error("Admin login error:", error);
+                modalMessage.textContent = `Admin Login Error: ${error.message}`;
+                modalMessage.style.color = 'red';
+            }
+        });
+
+        backFromAdminLoginButton.addEventListener('click', () => {
+            showModalStep('choice'); // Go back to the initial choice or relevant step
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                userStatus.textContent = `Welcome, ${user.email}!`;
+                signOutButton.classList.remove('hidden');
+
+                try {
+                    const adminRoleDocRef = doc(db, `artifacts/${appId}/users/${user.uid}/roles/admin`);
+                    const adminRoleDoc = await getDoc(adminRoleDocRef);
+
+                    if (adminRoleDoc.exists() && adminRoleDoc.data().isAdmin === true) {
+                        // Optionally show an admin link or modify UI for admin
+                        // No specific admin UI changes requested for the main page,
+                        // but this check confirms the admin status.
+                    }
+                } catch (error) {
+                    console.error("Error checking admin role:", error);
+                }
+            } else {
+                userId = null;
+                userStatus.textContent = '';
+                signOutButton.classList.add('hidden');
+            }
+        });
+
+        signOutButton.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                alert('You have been signed out.');
+                window.location.href = '/'; // Redirect to home page after sign out
+            } catch (error) {
+                console.error("Error signing out:", error);
+                alert('Error signing out: ' + error.message);
+            }
+        });
+        
+        // Handle initial authentication token if provided (e.g., from server-side rendering)
+        if (initialAuthToken) {
+            signInWithCustomToken(auth, initialAuthToken)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log("Signed in with custom token:", user.uid);
+                    // No automatic redirect to dashboard here, as the user might just be landing on the page.
+                    // The onAuthStateChanged listener above will handle UI updates.
+                })
+                .catch((error) => {
+                    console.error("Error signing in with custom token:", error);
+                    // Handle error, e.g., token expired or invalid
+                });
+        }
+    </script>
+</body>
+</html>
